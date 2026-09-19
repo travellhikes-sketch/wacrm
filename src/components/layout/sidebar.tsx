@@ -173,39 +173,35 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
         )}
         aria-label="Primary"
       >
-        <div className="flex h-14 shrink-0 items-center justify-between gap-2 px-4">
-          <Link href="/dashboard" className="flex items-center gap-2.5 min-w-0">
-            {logoUrl ? (
-              <img
-                src={logoUrl}
-                alt={crmName}
-                className="h-8 w-8 rounded-lg object-cover shrink-0"
-              />
-            ) : (
+        <div className={cn("flex h-14 shrink-0 items-center gap-2", collapsed ? "justify-center" : "justify-between px-4")}>
+          {!collapsed && (
+            <Link href="/dashboard" className="flex items-center gap-2.5 min-w-0">
               <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm">
                 <MessageSquare className="h-4 w-4" />
               </div>
-            )}
-            <span className="text-sm font-bold text-foreground truncate">
-              {crmName || t("title")}
-            </span>
-          </Link>
+              <span className="text-sm font-bold text-foreground truncate">
+                {crmName || t("title")}
+              </span>
+            </Link>
+          )}
           <button
             type="button"
             onClick={() => setCollapsed(!collapsed)}
             aria-label={t("collapseSidebar")}
-            className="flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
           >
             {collapsed ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
           </button>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label={t("closeMenu")}
-            className="flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground lg:hidden"
-          >
-            <X className="h-5 w-5" />
-          </button>
+          {!collapsed && (
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label={t("closeMenu")}
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground lg:hidden"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          )}
         </div>
 
         <nav className="flex-1 overflow-y-auto px-3 py-4">
@@ -230,11 +226,14 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
                       isActive
                         ? "bg-primary text-primary-foreground font-semibold shadow-sm"
                         : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                      collapsed && "justify-center px-0"
                     )}
                   >
                     <item.icon className="h-4 w-4 shrink-0" />
-                    <span className="flex-1 truncate">{t(item.labelKey as string)}</span>
-                    {item.beta && (
+                    {!collapsed && (
+                      <span className="flex-1 truncate">{t(item.labelKey as string)}</span>
+                    )}
+                    {item.beta && !collapsed && (
                       <span
                         aria-label={t("beta")}
                         className="rounded-full border border-amber-500/40 bg-amber-500/10 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-amber-300"
@@ -242,7 +241,7 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
                         {t("beta")}
                       </span>
                     )}
-                    {showUnreadDot && (
+                    {showUnreadDot && !collapsed && (
                       <span
                         aria-label={t("unreadConversations", { count: totalUnread })}
                         className="relative flex h-2 w-2"
@@ -251,7 +250,7 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
                         <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
                       </span>
                     )}
-                    {showNotificationBadge && (
+                    {showNotificationBadge && !collapsed && (
                       <span
                         aria-label={t("unreadNotifications", { count: unreadNotifications })}
                         className="flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-semibold text-primary-foreground"
@@ -279,10 +278,11 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
                       isActive
                         ? "bg-primary/10 text-primary"
                         : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                      collapsed && "justify-center px-0"
                     )}
                   >
-                    <item.icon className="h-4 w-4" />
-                    {t(item.labelKey as string)}
+                    <item.icon className="h-4 w-4 shrink-0" />
+                    {!collapsed && t(item.labelKey as string)}
                   </Link>
                 </li>
               );
@@ -292,14 +292,17 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
 
         {/* User section */}
         <div className="shrink-0 border-t border-border p-3">
-  <button
-    onClick={signOut}
-    className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left transition-colors hover:bg-muted/60 focus:bg-muted/60 focus:outline-none"
-  >
-    <LogOut className="size-4" />
-    <span className="flex-1 truncate">{t("menuSignOut")}</span>
-  </button>
-</div>
+          <button
+            onClick={signOut}
+            className={cn(
+              "flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left transition-colors text-red-500 hover:bg-red-500/10 focus:bg-red-500/10 focus:outline-none",
+              collapsed && "justify-center px-0"
+            )}
+          >
+            <LogOut className="h-4 w-4 shrink-0" />
+            {!collapsed && <span className="flex-1 truncate">{t("menuSignOut")}</span>}
+          </button>
+        </div>
       </aside>
     </>
   );
