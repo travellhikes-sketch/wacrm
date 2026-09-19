@@ -111,6 +111,7 @@ export async function loadConversationsSeries(
     .select('created_at, sender_type')
     .gte('created_at', start)
     .order('created_at', { ascending: true })
+    .limit(3000)
   if (error) throw error
 
   const keys = lastNDayKeys(rangeDays)
@@ -182,6 +183,7 @@ export async function loadResponseTime(db: DB): Promise<ResponseTimeSummary> {
     .gte('created_at', fourteenDaysAgo)
     .order('conversation_id', { ascending: true })
     .order('created_at', { ascending: true })
+    .limit(2000)
   if (error) throw error
 
   const rows = (data ?? []) as {
