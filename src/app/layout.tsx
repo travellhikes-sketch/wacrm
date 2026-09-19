@@ -77,6 +77,8 @@ const THEME_BOOT_SCRIPT = `
 })();
 `;
 
+import { CrmBrandingProvider } from "@/hooks/use-crm-branding";
+
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -91,13 +93,6 @@ export default async function RootLayout({
       data-theme={DEFAULT_THEME}
       data-mode={DEFAULT_MODE}
       className={`${inter.variable} h-full antialiased`}
-      // The `theme-boot` script below rewrites `data-theme` and
-      // `data-mode` on <html> from localStorage before React hydrates,
-      // so for any non-default choice the client DOM intentionally
-      // differs from the server-rendered defaults. suppressHydration-
-      // Warning silences the expected mismatch — it only applies to
-      // this element's own attributes, so genuine mismatches in
-      // children still surface.
       suppressHydrationWarning
     >
       <head>
@@ -110,8 +105,10 @@ export default async function RootLayout({
       <body className="min-h-full bg-background text-foreground font-sans">
         <NextIntlClientProvider messages={messages} locale={locale}>
           <ThemeProvider>
-            {children}
-            <ThemedToaster />
+            <CrmBrandingProvider>
+              {children}
+              <ThemedToaster />
+            </CrmBrandingProvider>
           </ThemeProvider>
         </NextIntlClientProvider>
       </body>
